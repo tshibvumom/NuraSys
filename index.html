@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nural Systems | Digital Nervous System</title>
+    <meta name="description" content="Nural Systems unifies your entire operation with Agentic AI that senses, thinks, and acts in real-time.">
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (via CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js (via CDN) - Mandatory Visualization Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Dark Navy (#0B1020) Background with Cyan (#2EE6FF), Violet (#7A3FFF), and Amber (#FFB100) Accents -->
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        bg: '#0B1020',
+                        card: '#141923',
+                        cyan: '#2EE6FF',
+                        violet: '#7A3FFF',
+                        amber: '#FFB100',
+                        grid: '#2A2F3A'
+                    },
+                    animation: {
+                        'spin-slow': 'spin 10s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B1020;
+            color: #FFFFFF;
+        }
+        
+        /* Transition classes for Visualizer */
+        .stage-group {
+            transition: opacity 0.5s ease;
+        }
+        .stage-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .stage-visible {
+            opacity: 1;
+        }
+
+        /* Chart Container Styling - Critical for Responsiveness */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        
+        /* Fade Animations for Text */
+        .fade-enter {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #mobile-menu.open {
+            max-height: 400px; /* Arbitrary large height */
+            opacity: 1;
+        }
+
+        /* Footer Link Hover */
+        .footer-link {
+            transition: color 0.2s;
+        }
+        .footer-link:hover {
+            color: #2EE6FF; /* Cyan */
+        }
+        .social-icon {
+            transition: transform 0.2s, color 0.2s;
+        }
+        .social-icon:hover {
+            transform: scale(1.1);
+            color: #2EE6FF;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan selection:text-bg">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur-md border-b border-gray-800 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan to-violet rounded-lg"></div>
+                <span class="text-xl font-bold tracking-tight text-white font-mono">Nural Systems</span>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+                <a href="#how-it-works" class="hover:text-white transition-colors">Architecture</a>
+                <a href="#performance" class="hover:text-white transition-colors">Performance</a>
+                <a href="#industry-focus" class="hover:text-white transition-colors">Industries</a>
+                <a href="#use-cases" class="hover:text-white transition-colors">Use Cases</a>
+                <a href="#about-us" class="hover:text-white transition-colors">Company</a>
+            </div>
+            
+            <!-- CTA & Mobile Toggle -->
+            <div class="flex items-center gap-4">
+                <a href="mailto:admin@naledzitechnologies.co.za" class="hidden md:block px-4 py-2 text-sm font-bold bg-white text-[#0B1020] rounded hover:bg-gray-200 transition-colors">
+                    Get Started
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="absolute top-full left-0 w-full bg-[#0B1020] border-b border-gray-800 p-4 md:hidden -z-10 flex flex-col space-y-4 shadow-2xl">
+            <a href="#how-it-works" class="text-gray-300 hover:text-white py-2 border-b border-gray-800">Architecture</a>
+            <a href="#performance" class="text-gray-300 hover:text-white py-2 border-b border-gray-800">Performance Data</a>
+            <a href="#industry-focus" class="text-gray-300 hover:text-white py-2 border-b border-gray-800">Industries</a>
+            <a href="#use-cases" class="text-gray-300 hover:text-white py-2 border-b border-gray-800">Use Cases</a>
+            <a href="#about-us" class="text-gray-300 hover:text-white py-2 border-b border-gray-800">Company</a>
+            <a href="mailto:admin@naledzitechnologies.co.za" class="text-cyan font-bold py-2">Contact Us</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden border-b border-gray-800">
+        <!-- Dynamic Background Pattern -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute inset-0 opacity-20" 
+                 style="background-image: linear-gradient(#2A2F3A 1px, transparent 1px), linear-gradient(90deg, #2A2F3A 1px, transparent 1px); background-size: 60px 60px;">
+            </div>
+            <!-- Animated Glow Orb -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-900 rounded-full blur-[120px] opacity-20 animate-pulse-slow"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <!-- Status Pill -->
+            <div class="inline-flex items-center px-3 py-1 rounded-full border border-gray-700 bg-gray-900/50 mb-6 backdrop-blur-sm">
+                <span class="flex h-2 w-2 rounded-full bg-cyan mr-2 animate-pulse"></span>
+                <span class="text-xs font-mono text-cyan tracking-wider">PLATFORM • HYPER-SCALABLE</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight font-mono">
+                The <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan to-violet">Digital Nervous System</span>:<br> Agentic Intelligence for the Enterprise.
+            </h1>
+            
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Nural Systems unifies your entire operation with Agentic AI that senses, thinks, and acts in real-time, delivering true resilience and operational autonomy.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="mailto:admin@naledzitechnologies.co.za" class="px-8 py-4 bg-cyan text-bg rounded-lg font-bold hover:bg-white transition-colors flex items-center group">
+                    Contact Sales Today
+                    <i data-lucide="arrow-right" class="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+                <a href="#how-it-works" class="px-8 py-4 border border-gray-700 text-white rounded-lg font-medium hover:border-violet hover:text-violet transition-colors">
+                    Explore Architecture
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Visualizer (Architecture) -->
+    <section id="how-it-works" class="py-24 bg-[#0B1020] border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 font-mono">Platform: Sense–Think–Act Architecture</h2>
+                <p class="text-gray-400">The unified, self-governing architecture for enterprise resilience.</p>
+            </div>
+            
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Left: Content Controls -->
+                <div class="space-y-8">
+                    <!-- Tabs -->
+                    <div class="flex space-x-4">
+                        <button onclick="setStage('sense')" id="btn-sense" class="flex-1 py-3 border-b-2 text-sm font-bold tracking-widest transition-all border-cyan text-white">1. SENSE</button>
+                        <button onclick="setStage('think')" id="btn-think" class="flex-1 py-3 border-b-2 text-sm font-bold tracking-widest transition-all border-gray-800 text-gray-600 hover:text-gray-400">2. THINK</button>
+                        <button onclick="setStage('act')" id="btn-act" class="flex-1 py-3 border-b-2 text-sm font-bold tracking-widest transition-all border-gray-800 text-gray-600 hover:text-gray-400">3. ACT</button>
+                    </div>
+
+                    <!-- Dynamic Content -->
+                    <div id="content-area" class="fade-enter-active">
+                        <div id="stage-icon-bg" class="inline-flex items-center justify-center p-3 rounded-lg mb-6 bg-[#2EE6FF20]">
+                            <i id="stage-icon" data-lucide="activity" class="w-6 h-6 text-cyan"></i>
+                        </div>
+                        <h3 id="stage-headline" class="text-3xl font-bold mb-4">Unifying Fragmented Systems (Data Ingestion)</h3>
+                        <p id="stage-description" class="text-gray-400 text-lg leading-relaxed mb-8">
+                            The Sense layer consolidates heterogeneous data streams—from mainframe logs to IoT sensors—into a single, low-latency Data Fabric, creating a unified context of operation.
+                        </p>
+                        <ul id="stage-points" class="space-y-3"></ul>
+                    </div>
+                </div>
+
+                <!-- Right: Dynamic Visual (SVG/DOM Animation) -->
+                <div class="relative h-[400px] w-full bg-[#141923] rounded-2xl border border-gray-800 overflow-hidden flex items-center justify-center shadow-2xl">
+                    <!-- Grid Overlay -->
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#2A2F3A 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    
+                    <!-- Central Processing Node -->
+                    <div id="central-node" class="relative z-10 transition-all duration-700 ease-in-out transform">
+                        <div id="central-circle" class="w-24 h-24 rounded-full border-4 bg-[#0B1020] flex items-center justify-center border-cyan transition-colors duration-500">
+                            <i id="central-icon" data-lucide="brain" class="w-10 h-10 text-cyan animate-pulse transition-colors duration-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Animation Layer -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none">
+                        <!-- Sense: Inward Flow -->
+                        <g id="visual-sense" class="stage-group stage-visible">
+                            <line x1="50%" y1="50%" x2="90%" y2="50%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 90% 50% L 50% 50%" /></circle>
+                            <line x1="50%" y1="50%" x2="70%" y2="85%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 70% 85% L 50% 50%" /></circle>
+                            <line x1="50%" y1="50%" x2="30%" y2="85%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 30% 85% L 50% 50%" /></circle>
+                            <line x1="50%" y1="50%" x2="10%" y2="50%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 10% 50% L 50% 50%" /></circle>
+                            <line x1="50%" y1="50%" x2="30%" y2="15%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 30% 15% L 50% 50%" /></circle>
+                            <line x1="50%" y1="50%" x2="70%" y2="15%" stroke="#2EE6FF" stroke-width="2" opacity="0.3" stroke-dasharray="4 4" />
+                            <circle r="3" fill="#2EE6FF"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 70% 15% L 50% 50%" /></circle>
+                        </g>
+                        <!-- Think: Processing Loop -->
+                        <g id="visual-think" class="stage-group stage-hidden">
+                            <circle cx="50%" cy="50%" r="80" fill="none" stroke="#7A3FFF" stroke-width="1" stroke-dasharray="10 5" class="animate-spin-slow" />
+                            <circle cx="50%" cy="50%" r="120" fill="none" stroke="#7A3FFF" stroke-width="1" opacity="0.3" />
+                        </g>
+                        <!-- Act: Outward Execution -->
+                        <g id="visual-act" class="stage-group stage-hidden">
+                            <line x1="50%" y1="50%" x2="90%" y2="70%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 90% 70%" /></circle>
+                            <line x1="50%" y1="50%" x2="50%" y2="95%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 50% 95%" /></circle>
+                            <line x1="50%" y1="50%" x2="10%" y2="70%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 10% 70%" /></circle>
+                            <line x1="50%" y1="50%" x2="10%" y2="30%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 10% 30%" /></circle>
+                            <line x1="50%" y1="50%" x2="50%" y2="5%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 50% 5%" /></circle>
+                            <line x1="50%" y1="50%" x2="90%" y2="30%" stroke="#FFB100" stroke-width="2" opacity="0.5" />
+                            <circle r="4" fill="#FFB100"><animateMotion dur="1s" repeatCount="indefinite" path="M 50% 50% L 90% 30%" /></circle>
+                        </g>
+                    </svg>
+
+                    <!-- Labels -->
+                    <div class="absolute top-4 left-4 text-xs font-mono text-gray-600">ERP_STREAM_01</div>
+                    <div class="absolute bottom-4 right-4 text-xs font-mono text-gray-600">ACTuator_LOG_READY</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Analytics (Performance Data) -->
+    <section id="performance" class="py-24 bg-[#0F1420] border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4 text-white">Performance Data: Latency & ROI</h2>
+                <p class="text-gray-400">Quantitative proof of value, measured in milliseconds and millions of savings.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Chart 1: OpEx Reduction -->
+                <div class="bg-[#141923] p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-cyan mb-6">Operational Cost Savings (Cumulative)</h3>
+                    <div class="chart-container">
+                        <canvas id="opexChart"></canvas>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-4 text-center">Nural systems reduce OpEx consistently via automated workflows and minimized errors.</p>
+                </div>
+
+                <!-- Chart 2: Latency Comparison -->
+                <div class="bg-[#141923] p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-violet mb-6">Decision Latency vs. Traditional Systems</h3>
+                    <div class="chart-container">
+                        <canvas id="latencyChart"></canvas>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-4 text-center">Sub-100ms decision cycles outpace traditional human-in-loop ERPs and slow APIs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section id="use-cases" class="py-24 bg-[#0B1020] border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+               <h2 class="text-3xl md:text-4xl font-bold mb-4 font-mono text-amber">Strategic Use Cases</h2>
+               <p class="text-gray-400 max-w-3xl mx-auto">Specific problems solved by the Digital Nervous System.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Use Case 1: Fraud/Anomaly Detection -->
+                <div class="p-6 rounded-xl border-l-4 border-amber bg-[#141923] hover:border-r-4 transition-all duration-300">
+                    <i data-lucide="scan" class="w-8 h-8 text-amber mb-3"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Real-Time Anomaly Scoring</h3>
+                    <p class="text-gray-400 text-sm">Automatically ingest transactions and logs to score risk and flag anomalies, reducing false positives by 60%.</p>
+                </div>
+                <!-- Use Case 2: Supply Chain Resilience -->
+                <div class="p-6 rounded-xl border-l-4 border-amber bg-[#141923] hover:border-r-4 transition-all duration-300">
+                    <i data-lucide="truck" class="w-8 h-8 text-amber mb-3"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Predictive Logistics Orchestration</h3>
+                    <p class="text-gray-400 text-sm">Sense weather, traffic, and inventory levels to dynamically reroute and re-prioritise shipments for maximum efficiency.</p>
+                </div>
+                <!-- Use Case 3: Autonomous IT Ops -->
+                <div class="p-6 rounded-xl border-l-4 border-amber bg-[#141923] hover:border-r-4 transition-all duration-300">
+                    <i data-lucide="server" class="w-8 h-8 text-amber mb-3"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Proactive System Healing</h3>
+                    <p class="text-gray-400 text-sm">Monitor system health to predict failure and initiate self-healing protocols before human intervention is required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Pain Points (Industry Focus) -->
+    <section id="industry-focus" class="py-24 bg-[#0F1420] border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+               <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">Industry Focus: Targeted Resilience</h2>
+               <p class="text-gray-400 max-w-2xl mx-auto">Turning critical industry challenges into competitive advantages.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Finance -->
+                <div class="p-6 rounded-xl border-t-4 border-violet bg-[#141923] shadow-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="banknote" class="w-6 h-6 text-violet"></i>
+                        <h3 class="text-xl font-bold text-white">Financial Services</h3>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-300 mb-3">Pain Point: Legacy systems slow fraud detection.</p>
+                    <div class="h-px bg-gray-700 my-4"></div>
+                    <p class="text-violet font-bold text-sm uppercase mb-2">Nural Solution</p>
+                    <p class="text-white text-base">Real-Time Risk Intelligence: Sub-100ms detection for compliance.</p>
+                </div>
+                <!-- Energy -->
+                <div class="p-6 rounded-xl border-t-4 border-amber bg-[#141923] shadow-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="zap" class="w-6 h-6 text-amber"></i>
+                        <h3 class="text-xl font-bold text-white">Energy & Utilities</h3>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-300 mb-3">Pain Point: Unexpected grid outages balloon costs.</p>
+                    <div class="h-px bg-gray-700 my-4"></div>
+                    <p class="text-amber font-bold text-sm uppercase mb-2">Nural Solution</p>
+                    <p class="text-white text-base">Autonomous Grid Orchestration: Predict 90% of failures.</p>
+                </div>
+                <!-- Public Sector -->
+                <div class="p-6 rounded-xl border-t-4 border-cyan bg-[#141923] shadow-lg">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-cyan"></i>
+                        <h3 class="text-xl font-bold text-white">Public Sector</h3>
+                    </div>
+                    <p class="text-lg font-semibold text-gray-300 mb-3">Pain Point: Data silos cripple threat response.</p>
+                    <div class="h-px bg-gray-700 my-4"></div>
+                    <p class="text-cyan font-bold text-sm uppercase mb-2">Nural Solution</p>
+                    <p class="text-white text-base">Unified Command & Control: Cross-agency integration and threat mitigation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section (Company / Our Story) -->
+    <section id="about-us" class="py-24 bg-[#0B1020] border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+               <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Story: Powered by Naledzi Technologies</h2>
+               <p class="text-gray-400 max-w-3xl mx-auto">
+                    Nural Systems was established in **2024** to address the complexity of autonomous enterprise intelligence. We are the innovation arm of **Naledzi Technologies**, which has a proven 11+ year track record in delivering mission-critical IT services and solutions across the continent. Our heritage means your trust is built on a foundation of proven reliability.
+               </p>
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mb-10 text-cyan">The Leadership Team</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- CEO -->
+                <div class="text-center p-6 bg-[#141923] rounded-xl border border-gray-800 hover:border-violet transition-colors">
+                    <div class="w-24 h-24 rounded-full bg-violet/20 mx-auto mb-4 flex items-center justify-center text-violet border-2 border-violet">
+                        <i data-lucide="crown" class="w-10 h-10"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white">Ratshibvumo Matodzi</h4>
+                    <p class="text-cyan font-semibold mb-3">Founder & CEO</p>
+                    <p class="text-gray-400 text-sm">Visionary architect behind the Digital Nervous System.</p>
+                </div>
+                <!-- Sales -->
+                <div class="text-center p-6 bg-[#141923] rounded-xl border border-gray-800 hover:border-amber transition-colors">
+                    <div class="w-24 h-24 rounded-full bg-amber/20 mx-auto mb-4 flex items-center justify-center text-amber border-2 border-amber">
+                        <i data-lucide="briefcase" class="w-10 h-10"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white">Stanley Mabuza</h4>
+                    <p class="text-cyan font-semibold mb-3">Sales & Strategy Executive</p>
+                    <p class="text-gray-400 text-sm">Partnerships and go-to-market strategy leader.</p>
+                </div>
+                <!-- DevOps -->
+                <div class="text-center p-6 bg-[#141923] rounded-xl border border-gray-800 hover:border-cyan transition-colors">
+                    <div class="w-24 h-24 rounded-full bg-cyan/20 mx-auto mb-4 flex items-center justify-center text-cyan border-2 border-cyan">
+                        <i data-lucide="code-square" class="w-10 h-10"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-white">Aluwani Mufamadi</h4>
+                    <p class="text-cyan font-semibold mb-3">DevOps Executive</p>
+                    <p class="text-gray-400 text-sm">Ensuring 99.99% platform reliability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section (Security & Compliance) -->
+    <section id="security" class="py-24 bg-[#0F1420]">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="inline-flex justify-center mb-6">
+                <i data-lucide="shield" class="w-12 h-12 text-violet"></i>
+            </div>
+            <h2 class="text-3xl font-bold mb-6">Security & Compliance</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-10">
+                Data security and regulatory compliance are non-negotiable foundations of the Nural platform, ensuring governance in every autonomous action.
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="p-4 border border-gray-700 rounded-lg bg-[#0B1020] text-sm font-bold text-gray-300 font-mono">SOC 2 Type II</div>
+                <div class="p-4 border border-gray-700 rounded-lg bg-[#0B1020] text-sm font-bold text-gray-300 font-mono">ISO 27001</div>
+                <div class="p-4 border border-gray-700 rounded-lg bg-[#0B1020] text-sm font-bold text-gray-300 font-mono">GDPR Ready</div>
+                <div class="p-4 border border-gray-700 rounded-lg bg-[#0B1020] text-sm font-bold text-gray-300 font-mono">Quantum Safe</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW DETAILED FOOTER SECTION -->
+    <footer class="bg-[#050810] text-white pt-16 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-10 border-b border-gray-800 pb-12">
+                <!-- Brand Info -->
+                <div class="col-span-2 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-6 h-6 bg-gradient-to-br from-cyan to-violet rounded-md"></div>
+                        <span class="text-xl font-bold tracking-tight text-white font-mono">Nural Systems</span>
+                    </div>
+                    <p class="text-sm text-gray-400 pr-8">
+                        The unified Digital Nervous System for autonomous enterprise intelligence. Powered by Naledzi Technologies.
+                    </p>
+                </div>
+
+                <!-- Platform Links -->
+                <div class="col-span-1">
+                    <h4 class="font-semibold text-lg mb-4 text-cyan">Platform</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#how-it-works" class="footer-link text-gray-400 hover:text-cyan">Architecture</a></li>
+                        <li><a href="#performance" class="footer-link text-gray-400 hover:text-cyan">Performance Data</a></li>
+                        <li><a href="#industry-focus" class="footer-link text-gray-400 hover:text-cyan">Industry Focus</a></li>
+                        <li><a href="#use-cases" class="footer-link text-gray-400 hover:text-cyan">Use Cases</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Links -->
+                <div class="col-span-1">
+                    <h4 class="font-semibold text-lg mb-4 text-violet">Company</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#about-us" class="footer-link text-gray-400 hover:text-violet">Our Story</a></li>
+                        <li><a href="mailto:admin@naledzitechnologies.co.za" class="footer-link text-gray-400 hover:text-violet">Contact Sales</a></li>
+                        <li><a href="#" class="footer-link text-gray-400 hover:text-violet">Careers</a></li>
+                        <li><a href="#" class="footer-link text-gray-400 hover:text-violet">Partnerships</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Links -->
+                <div class="col-span-1">
+                    <h4 class="font-semibold text-lg mb-4 text-amber">Legal</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#security" class="footer-link text-gray-400 hover:text-amber">Security & Compliance</a></li>
+                        <li><a href="#" class="footer-link text-gray-400 hover:text-amber">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link text-gray-400 hover:text-amber">Terms of Service</a></li>
+                        <li><a href="#" class="footer-link text-gray-400 hover:text-amber">Imprint</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Copyright, Socials, Language -->
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 space-y-4 md:space-y-0">
+                
+                <p class="text-sm text-gray-500 text-center md:text-left">
+                    &copy; 2025 Nural Systems, Inc. | An innovation of Naledzi Technologies.
+                </p>
+
+                <!-- Social Media (Links point to naledzitechnologies.co.za assets) -->
+                <div class="flex space-x-6 text-gray-500 text-lg">
+                    <a href="https://www.linkedin.com/company/naledzi-technologies/" target="_blank" aria-label="LinkedIn" class="social-icon hover:text-cyan">
+                        <i data-lucide="linkedin" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://x.com/NaledziTech" target="_blank" aria-label="Twitter" class="social-icon hover:text-cyan">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://naledzitechnologies.co.za/" target="_blank" aria-label="Naledzi Website" class="social-icon hover:text-cyan">
+                        <i data-lucide="globe" class="w-5 h-5"></i>
+                    </a>
+                </div>
+
+                <!-- Language Selector (Fixed) -->
+                <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span>English (US)</span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // --- 1. Constants & State ---
+        const COLORS = { cyan: '#2EE6FF', violet: '#7A3FFF', amber: '#FFB100', textMuted: '#9CA3AF' };
+        
+        const stages = {
+            sense: {
+                color: COLORS.cyan,
+                icon: 'activity',
+                headline: "Unifying Fragmented Systems (Data Ingestion)",
+                description: "The Sense layer consolidates heterogeneous data streams—from mainframe logs to IoT sensors—into a single, low-latency Data Fabric, creating a unified context of operation.",
+                points: ["Real-time Data Fabric", "Enterprise-Wide Integration", "High-Volume Sensor Ingestion"]
+            },
+            think: {
+                color: COLORS.violet,
+                icon: 'brain',
+                headline: "Sub-100ms Adaptive Intelligence (Processing)",
+                description: "Our adaptive AI instantly processes complex, multi-dimensional data, predicts outcomes, and generates actionable, compliant decisions in milliseconds.",
+                points: ["Sub-100ms Decision Cycles", "Predictive Modeling", "Adaptive Risk Scoring", "Agentic Reasoning Engine"]
+            },
+            act: {
+                color: COLORS.amber,
+                icon: 'zap',
+                headline: "Autonomous, Governed Execution (Automation)",
+                description: "The platform orchestrates and executes workflows across systems (APIs, robotic automation) with built-in human-in-the-loop governance and audit trails.",
+                points: ["Automated Orchestration", "API Integration & RPA", "Streamlined Workflows", "Human-in-the-Loop Guardrails"]
+            }
+        };
+
+        // --- 2. Initialization ---
+        window.onload = function() {
+            lucide.createIcons();
+            setStage('sense'); 
+            initCharts();
+            
+            // Mobile Menu Toggle
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('open');
+                // Re-create icons when menu opens to ensure Lucide renders properly
+                if(menu.classList.contains('open')) {
+                    lucide.createIcons();
+                }
+            });
+
+            // Close menu when a navigation item is clicked
+            menu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menu.classList.remove('open');
+                });
+            });
+        };
+
+        // --- 3. Interaction Logic (Process Visualizer) ---
+        function setStage(stageKey) {
+            const data = stages[stageKey];
+            
+            // Buttons
+            ['sense', 'think', 'act'].forEach(key => {
+                const btn = document.getElementById(`btn-${key}`);
+                if (btn) { // Check if element exists
+                    if (key === stageKey) {
+                        btn.className = `flex-1 py-3 border-b-2 text-sm font-bold tracking-widest transition-all text-white`;
+                        // Using inline style for dynamic color
+                        btn.style.borderColor = data.color;
+                        btn.style.color = 'white';
+                    } else {
+                        btn.className = "flex-1 py-3 border-b-2 text-sm font-bold tracking-widest transition-all border-gray-800 text-gray-600 hover:text-gray-400";
+                        btn.style.borderColor = '#1F2937';
+                        btn.style.color = '#4B5563';
+                    }
+                }
+            });
+
+            // Content Animation
+            const contentArea = document.getElementById('content-area');
+            if (contentArea) {
+                contentArea.classList.remove('fade-enter-active');
+                contentArea.classList.add('fade-enter');
+            }
+
+
+            setTimeout(() => {
+                const headlineEl = document.getElementById('stage-headline');
+                const descriptionEl = document.getElementById('stage-description');
+                const iconBg = document.getElementById('stage-icon-bg');
+                const iconEl = document.getElementById('stage-icon');
+                const list = document.getElementById('stage-points');
+
+                if (headlineEl) headlineEl.innerText = data.headline;
+                if (descriptionEl) descriptionEl.innerText = data.description;
+                
+                // Icon Background and Color
+                if (iconBg) iconBg.style.backgroundColor = `${data.color}20`;
+                if (iconEl) {
+                    iconEl.setAttribute('data-lucide', data.icon);
+                    iconEl.style.color = data.color;
+                }
+                
+                // Update list
+                if (list) {
+                    list.innerHTML = '';
+                    stages[stageKey].points.forEach(point => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center text-gray-300";
+                        li.innerHTML = `<i data-lucide="check-circle" class="mr-3 w-4 h-4" style="color: ${data.color}"></i>${point}`;
+                        list.appendChild(li);
+                    });
+                }
+                lucide.createIcons();
+
+                if (contentArea) {
+                    contentArea.classList.remove('fade-enter');
+                    contentArea.classList.add('fade-enter-active');
+                }
+            }, 300);
+
+            // Visuals
+            ['sense', 'think', 'act'].forEach(key => {
+                const group = document.getElementById(`visual-${key}`);
+                if (group) {
+                    if (key === stageKey) {
+                        group.classList.remove('stage-hidden');
+                        group.classList.add('stage-visible');
+                    } else {
+                        group.classList.remove('stage-visible');
+                        group.classList.add('stage-hidden');
+                    }
+                }
+            });
+
+            // Central Node
+            const node = document.getElementById('central-node');
+            const circle = document.getElementById('central-circle');
+            const cIcon = document.getElementById('central-icon');
+            if (node) {
+                if (stageKey === 'think') {
+                    node.style.transform = 'scale(1.2)';
+                    node.style.filter = `drop-shadow(0 0 30px ${COLORS.violet}60)`;
+                } else {
+                    node.style.transform = 'scale(1)';
+                    node.style.filter = 'none';
+                }
+            }
+            if (circle) circle.style.borderColor = data.color;
+            if (cIcon) cIcon.style.color = data.color;
+        }
+
+        // --- 4. Chart.js Initialization ---
+        function initCharts() {
+            // Chart 1: OpEx Reduction (Line)
+            const ctx1 = document.getElementById('opexChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'OpEx Savings (%)',
+                        data: [10, 25, 38, 47],
+                        borderColor: COLORS.cyan,
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            gradient.addColorStop(0, `${COLORS.cyan}50`);
+                            gradient.addColorStop(1, `${COLORS.cyan}00`);
+                            return gradient;
+                        },
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: COLORS.bg,
+                        pointBorderColor: COLORS.cyan,
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#2A2F3A' }, ticks: { color: COLORS.textMuted } },
+                        x: { grid: { color: '#2A2F3A' }, ticks: { color: COLORS.textMuted } }
+                    }
+                }
+            });
+
+            // Chart 2: Latency Comparison (Bar)
+            const ctx2 = document.getElementById('latencyChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Legacy ERP', 'Cloud 1.0', 'Nural Systems'],
+                    datasets: [{
+                        label: 'Decision Latency (ms)',
+                        data: [2000, 800, 95], // 2s, 800ms, 95ms
+                        backgroundColor: [
+                            '#4B5563', // Gray
+                            '#4B5563', // Gray
+                            COLORS.violet // Hero
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: '#2A2F3A' }, 
+                            ticks: { color: COLORS.textMuted } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: COLORS.textMuted } 
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
